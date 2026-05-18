@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>グラナド・エスパダ風ゲーム</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- ===== メイン画面 ===== -->
+        <div id="main-screen" class="screen">
+            <h1>⚔️ グラナド・エスパダ</h1>
+            <p>Web版RPG</p>
+            <div class="button-group">
+                <button class="btn primary-btn" onclick="startNewGame()">新規ゲーム</button>
+                <button class="btn secondary-btn" onclick="showLoadGame()">続きから</button>
+            </div>
+        </div>
+
+        <!-- ===== キャラクター作成画面 ===== -->
+        <div id="character-creation-screen" class="screen hidden">
+            <div class="content-wrapper">
+                <h2>キャラクター作成</h2>
+                <div class="creation-form">
+                    <div>
+                        <label for="char-name">キャラクター名:</label>
+                        <input type="text" id="char-name" placeholder="冒険者の名前を入力">
+                    </div>
+
+                    <div>
+                        <label>職業を選択:</label>
+                        <div class="class-selection">
+                            <button class="class-btn" data-class="swordsman" onclick="selectClass('swordsman')">
+                                ⚔️ 剣士
+                                <small>力重視</small>
+                            </button>
+                            <button class="class-btn" data-class="musketeer" onclick="selectClass('musketeer')">
+                                🔫 銃士
+                                <small>敏捷重視</small>
+                            </button>
+                            <button class="class-btn" data-class="wizard" onclick="selectClass('wizard')">
+                                ✨ 魔法使い
+                                <small>知力重視</small>
+                            </button>
+                            <button class="class-btn" data-class="cleric" onclick="selectClass('cleric')">
+                                📿 神官
+                                <small>知恵重視</small>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="class-stats"></div>
+
+                    <div class="button-group">
+                        <button class="btn primary-btn" onclick="createCharacter()">冒険を始める</button>
+                        <button class="btn secondary-btn" onclick="backToMain()">戻る</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== タウン画面 ===== -->
+        <div id="town-screen" class="screen hidden">
+            <div class="content-wrapper">
+                <h2>🏰 タウン</h2>
+                
+                <div class="town-layout">
+                    <!-- サイドバー -->
+                    <div class="sidebar">
+                        <!-- プレイヤー情報 -->
+                        <div class="player-card">
+                            <h3 id="player-name-display">キャラクター名</h3>
+                            <div class="stat-line">Lv: <span id="player-level">1</span></div>
+                            <div class="stat-line">経験値: <span id="player-exp">0</span> / <span id="player-exp-next">100</span></div>
+                            <div class="stat-line">ゴールド: <span id="player-gold">0</span></div>
+                        </div>
+
+                        <!-- HP/MP表示 -->
+                        <div class="status-panel">
+                            <h4>ステータス</h4>
+                            <div class="stat-item">
+                                <span>HP:</span>
+                                <div class="hp-bar">
+                                    <div id="player-hp-display" class="hp-fill"></div>
+                                </div>
+                                <span id="player-hp-text">100/100</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>MP:</span>
+                                <div class="mana-bar">
+                                    <div id="player-mana-display" class="mana-fill"></div>
+                                </div>
+                                <span id="player-mana-text">50/50</span>
+                            </div>
+
+                            <h4 style="margin-top: 15px;">基本ステータス</h4>
+                            <div class="stat-line">⚔️ 力: <span id="stat-str">10</span></div>
+                            <div class="stat-line">🎯 敏捷: <span id="stat-agi">10</span></div>
+                            <div class="stat-line">🛡️ 耐久: <span id="stat-vit">10</span></div>
+                            <div class="stat-line">📚 知力: <span id="stat-int">10</span></div>
+                            <div class="stat-line">✨ 知恵: <span id="stat-wis">10</span></div>
+                        </div>
+
+                        <!-- ニュース -->
+                        <div class="news-panel">
+                            <h3>📰 ニュース</h3>
+                            <p style="font-size: 0.9em; color: #aaa;">ダンジョンから敵の足音が...</p>
+                        </div>
+                    </div>
+
+                    <!-- メインコンテンツ -->
+                    <div>
+                        <div class="town-menu">
+                            <button class="town-btn" onclick="showDungeonList()">
+                                🗺️ ダンジョン
+                                <small>敵を倒して経験値を獲得</small>
+                            </button>
+                            <button class="town-btn" onclick="showEquipment()">
+                                🛡️ 装備
+                                <small>武器や防具を装備</small>
+                            </button>
+                            <button class="town-btn" onclick="showSkills()">
+                                ✨ スキル
+                                <small>習得した技を確認</small>
+                            </button>
+                            <button class="town-btn" onclick="showShop()">
+                                🛍️ ショップ
+                                <small>アイテムを購入</small>
+                            </button>
+                            <button class="town-btn" onclick="saveGame()">
+                                💾 セーブ
+                                <small>ゲームを保存</small>
+                            </button>
+                            <button class="town-btn" onclick="backToMain()">
+                                🚪 タイトル
+                                <small>メイン画面に戻る</small>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== ダンジョン一覧画面 ===== -->
+        <div id="dungeon-list-screen" class="screen hidden">
+            <div class="content-wrapper">
+                <h2>🗺️ ダンジョン選択</h2>
+                <p>推奨レベル以下のダンジョンが選択できます</p>
+                <div id="dungeon-list-container" class="dungeon-list"></div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn secondary-btn" onclick="backToTown()">戻る</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== バトル画面 ===== -->
+        <div id="battle-screen" class="screen hidden">
+            <div class="battle-container">
+                <div class="battle-header">
+                    <h2>⚔️ バトル</h2>
+                </div>
+
+                <!-- バトルフィールド -->
+                <div class="battle-field">
+                    <div>
+                        <div class="character-model">🧙</div>
+                        <div class="character-info">
+                            <h3 id="player-battle-name">プレイヤー</h3>
+                            <div class="stat-item">
+                                <span>HP:</span>
+                                <div class="hp-bar">
+                                    <div id="player-battle-hp" class="hp-fill"></div>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <span>MP:</span>
+                                <div class="mana-bar">
+                                    <div id="player-battle-mp" class="mana-fill"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="vs-separator">VS</div>
+
+                    <div>
+                        <div class="character-model" id="enemy-model">👹</div>
+                        <div class="character-info">
+                            <h3 id="enemy-battle-name">敵</h3>
+                            <div class="stat-item">
+                                <span>HP:</span>
+                                <div class="hp-bar">
+                                    <div id="enemy-battle-hp" class="hp-fill"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- バトルログ -->
+                <div class="battle-log">
+                    <h4>📋 バトルログ</h4>
+                    <div id="battle-log-content" class="log-content"></div>
+                </div>
+
+                <!-- アクションボタン -->
+                <div class="battle-actions" id="battle-actions">
+                    <button class="action-btn" onclick="battleUI.executeAction('attack')">⚔️ 攻撃</button>
+                    <button class="action-btn" onclick="showSkillMenu()">✨ スキル</button>
+                    <button class="action-btn" onclick="battleUI.executeAction('defend')">🛡️ 防御</button>
+                    <button class="action-btn" onclick="showItemMenu()">🧪 アイテム</button>
+                    <button class="action-btn" onclick="battleUI.executeAction('flee')">🏃 逃げる</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 装備画面 ===== -->
+        <div id="equipment-screen" class="screen hidden">
+            <div class="content-wrapper">
+                <h2>🛡️ 装備</h2>
+                <div class="equipment-layout">
+                    <div id="equipment-list"></div>
+                    <div id="equipment-stats"></div>
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn secondary-btn" onclick="backToTown()">戻る</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== スキル画面 ===== -->
+        <div id="skills-screen" class="screen hidden">
+            <div class="content-wrapper">
+                <h2>✨ スキル</h2>
+                <div id="skills-list"></div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn secondary-btn" onclick="backToTown()">戻る</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== スキルメニューオーバーレイ ===== -->
+        <div id="skill-menu-overlay" class="menu-overlay hidden">
+            <div class="menu-panel">
+                <h3>スキルを選択</h3>
+                <div id="skill-menu-list"></div>
+                <button class="menu-close-btn" onclick="closeSkillMenu()">閉じる</button>
+            </div>
+        </div>
+
+        <!-- ===== アイテムメニューオーバーレイ ===== -->
+        <div id="item-menu-overlay" class="menu-overlay hidden">
+            <div class="menu-panel">
+                <h3>アイテムを選択</h3>
+                <div id="item-menu-list"></div>
+                <button class="menu-close-btn" onclick="closeItemMenu()">閉じる</button>
+            </div>
+        </div>
+
+        <!-- ===== バトル結果オーバーレイ ===== -->
+        <div id="battle-result-overlay" class="battle-result hidden">
+            <div class="result-panel">
+                <h2 id="result-title">勝利！</h2>
+                <p id="result-exp">経験値を獲得！</p>
+                <p id="result-gold">ゴールドを獲得！</p>
+                <button class="result-btn" onclick="closeBattleResult()">次へ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- スクリプト読み込み -->
+    <script src="character.js"></script>
+    <script src="battle.js"></script>
+    <script src="battle-ui.js"></script>
+    <script src="dungeon.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
